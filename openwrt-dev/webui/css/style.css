@@ -1,0 +1,508 @@
+/* Font Awesome path fixes */
+@font-face {
+    font-family: 'Font Awesome 6 Free';
+    font-style: normal;
+    font-weight: 900;
+    src: url('../webfonts/fa-solid-900.woff2') format('woff2'),
+         url('../webfonts/fa-solid-900.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Font Awesome 6 Free';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../webfonts/fa-regular-400.woff2') format('woff2'),
+         url('../webfonts/fa-regular-400.ttf') format('truetype');
+}
+
+/* Fan icon animations */
+.fa-fan {
+    transition: transform 0.5s ease-in-out;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+#fan-speed-icon {
+    display: inline-block;
+    animation: spin var(--speed, 2s) linear infinite;
+}
+
+@keyframes pulse {
+    0% { transform: rotate(var(--rotation)) scale(1); }
+    50% { transform: rotate(var(--rotation)) scale(var(--scale)); }
+    100% { transform: rotate(var(--rotation)) scale(1); }
+}
+
+#fan-servo-icon {
+    --rotation: 0deg;
+    --scale: 1;
+    transform-origin: center;
+    animation: pulse 2s ease-in-out infinite;
+    transition: --rotation 0.3s ease;
+}
+
+/* General Styles */
+body {
+    font: normal 13px Arial, sans-serif;
+    color: #999;
+    background: #f8f9fa;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+#content {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+#left {
+    flex: 0 0 300px;
+    margin-right: 20px;
+}
+
+#right {
+    flex: 1;
+}
+
+#temp-container {
+    background: #2e2e2e;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.probe {
+    background: #1e1e1e;
+    border-radius: 4px;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.probe-block {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.25rem;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.probe-name {
+    font-weight: bold;
+    color: #212529;
+}
+
+.pname {
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.pname:hover {
+    color: #0ad;
+}
+
+.plabel {
+    font-size: 24px;
+    color: #0ad;
+}
+
+.probe-temp {
+    font-size: 1.25rem;
+    color: #dc3545;
+}
+
+.pset {
+    font-size: 14px;
+    color: #666;
+}
+
+.probe-setpoint {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+#set {
+    cursor: pointer;
+    color: #0ad;
+}
+
+#set:hover {
+    color: #fff;
+}
+
+.editable {
+    cursor: pointer;
+}
+
+.editable:hover {
+    color: #0ad;
+}
+
+.jedit input {
+    background: #1e1e1e;
+    border: 1px solid #0ad;
+    color: #fff;
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+#fanspeed {
+    position: relative;
+    height: 20px;
+    background: #1e1e1e;
+    border-radius: 4px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+#fan {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.fan-speed {
+    font-size: 1.25rem;
+    color: #0d6efd;
+}
+
+#fanc {
+    position: absolute;
+    left: 0;
+    top: 3px;
+    z-index: 0;
+    background: #008db8;
+    width: 0%;
+    height: 14px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+#fanf {
+    position: absolute;
+    left: 0;
+    top: 3px;
+    z-index: 1;
+    background: #0ad;
+    width: 0%;
+    height: 14px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+#fanl {
+    position: absolute;
+    left: 10px;
+    top: 1px;
+    z-index: 2;
+    color: #fff;
+    font-size: 12px;
+}
+
+#outputselect, #rangeselect {
+    background: #1e1e1e;
+    color: #fff;
+    border: none;
+    padding: 5px;
+    border-radius: 4px;
+    width: 100%;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+#outputselect:hover, #rangeselect:hover {
+    background: #2a2a2a;
+}
+
+#lidopen {
+    background: #1e1e1e;
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+#lidopen:hover {
+    background: #2a2a2a;
+}
+
+.button {
+    background: #1e1e1e;
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: #2a2a2a;
+}
+
+#alarmclear {
+    background: #8b0000;
+}
+
+#alarmclear:hover {
+    background: #a00;
+}
+
+#graphcontainer {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: #2e2e2e;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+#graph {
+    width: 100% !important;
+    height: 400px !important;
+    border-radius: 0.5rem;
+    background: rgba(0, 0, 0, 0.4);
+    margin-bottom: 1rem;
+}
+
+.flot-base, .flot-overlay {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#graph_overview {
+    width: 100% !important;
+    height: 50px !important;
+    margin-top: 10px;
+}
+
+#graphtt {
+    position: fixed;
+    display: none;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    min-width: 150px;
+}
+
+#graphtt_title {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+#graphtt_content {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.flot-text {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 12px;
+}
+
+.flot-x-axis .flot-tick-label, 
+.flot-y-axis .flot-tick-label {
+    fill: rgba(255, 255, 255, 0.6);
+}
+
+/* Probe colors */
+.probe0-color { color: #e73; }  /* Pit */
+.probe1-color { color: #69f; }  /* Food 1 */
+.probe2-color { color: #6c0; }  /* Food 2 */
+.probe3-color { color: #f90; }  /* Food 3 */
+
+/* Alarm states */
+.alarmHigh { color: #f43f5e !important; }  /* Red-500 */
+.alarmLow { color: #3b82f6 !important; }   /* Blue-500 */
+
+.pcolor0 { background-color: #e73; }
+.pcolor1 { background-color: #6c3; }
+.pcolor2 { background-color: #297; }
+.pcolor3 { background-color: #789; }
+.ooutcolor { background-color: #6cf; }
+.ofancolor { background-color: #6cf; }
+.osercolor { background-color: #6cf; }
+
+#mock-controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(46, 46, 46, 0.95);
+    border-radius: 8px;
+    padding: 15px;
+    color: #fff;
+    z-index: 1000;
+    width: 300px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+#mock-controls.collapsed {
+    width: auto;
+}
+
+#mock-controls h3 {
+    margin: 0 0 15px 0;
+    color: #0ad;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#mock-controls .toggle-collapse {
+    cursor: pointer;
+    padding: 5px;
+}
+
+#mock-controls .control-group {
+    margin-bottom: 15px;
+}
+
+#mock-controls label {
+    display: block;
+    margin-bottom: 5px;
+    color: #999;
+}
+
+#mock-controls input[type="range"] {
+    width: 100%;
+    margin: 5px 0;
+}
+
+#mock-controls input[type="number"] {
+    background: #1e1e1e;
+    border: 1px solid #0ad;
+    color: #fff;
+    padding: 5px;
+    border-radius: 4px;
+    width: 80px;
+}
+
+#mock-controls button {
+    background: #1e1e1e;
+    border: 1px solid #0ad;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+#mock-controls button:hover {
+    background: #0ad;
+}
+
+#mock-controls .value-display {
+    display: inline-block;
+    min-width: 50px;
+    text-align: right;
+    color: #0ad;
+    margin-left: 10px;
+}
+
+#mock-controls .form-range {
+    margin-bottom: 0.5rem;
+}
+
+#mock-controls .btn-group {
+    gap: 0.25rem;
+}
+
+.status-active {
+    background-color: #d1e7dd !important;
+}
+
+.alarm-active {
+    background-color: #f8d7da !important;
+}
+
+.editable {
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.2rem;
+    background-color: #e9ecef;
+    cursor: pointer;
+}
+
+.editable:hover {
+    background-color: #dee2e6;
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-title {
+    color: #0d6efd;
+    margin-bottom: 1rem;
+}
+
+/* Fan control animations and effects */
+.fa-fan.fa-spin {
+    transform-origin: center;
+    transition: animation-duration 0.3s ease;
+}
+
+/* Tooltip styles */
+.group:hover .hidden {
+    display: block;
+    z-index: 50;
+}
+
+/* Status indicator animations */
+#status-indicators > div {
+    transition: all 0.3s ease;
+}
+
+#status-indicators > div:not(.hidden) {
+    animation: fadeIn 0.3s ease;
+}
+
+#boost-mode:not(.hidden) i {
+    animation: pulse 1s infinite;
+}
+
+#max-power:not(.hidden) {
+    animation: warning-pulse 2s infinite;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes warning-pulse {
+    0% { background-color: rgba(239, 68, 68, 0.2); }
+    50% { background-color: rgba(239, 68, 68, 0.3); }
+    100% { background-color: rgba(239, 68, 68, 0.2); }
+}
+
+/* Progress bar animations */
+#fan-progress, #servo-progress {
+    transition: width 0.3s ease;
+}
+
+/* Fan icon speed animation */
+.fa-fan {
+    transition: transform 0.3s ease;
+}

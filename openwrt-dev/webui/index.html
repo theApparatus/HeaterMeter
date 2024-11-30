@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeaterMeter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="css/fontawesome.min.css" rel="stylesheet">
+    <link href="css/solid.min.css" rel="stylesheet">
+    <link href="css/regular.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.flot.min.js"></script>
+    <script src="js/jquery.flot.time.min.js"></script>
+    <script src="js/mock.js"></script>
+    <script src="js/main.js"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-950 to-blue-950 text-white min-h-screen p-4">
+    <!-- Status Bar with Fan Controls -->
+    <div class="bg-black/40 p-2 rounded-lg flex items-center gap-2 mb-4">
+        <div class="group relative">
+            <span class="text-blue-400 cursor-help">Output <span id="fan-output-display">0</span>%</span>
+            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-2 bg-gray-900 text-sm rounded-lg shadow-lg">
+                Raw PID controller output (0-100%). Shows how much power the system thinks is needed to maintain temperature.
+            </div>
+        </div>
+        <span class="text-white/20">/</span>
+        <div class="group relative">
+            <i class="fas fa-gauge-high text-amber-400 cursor-help" id="fan-servo-icon"></i>
+            <span class="text-amber-400"><span id="fan-servo-display">0</span>%</span>
+            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-2 bg-gray-900 text-sm rounded-lg shadow-lg">
+                Damper position for additional airflow control, independent of fan speed.
+            </div>
+        </div>
+        <span class="text-white/20">/</span>
+        <div class="group relative">
+            <i class="fas fa-fan text-blue-400 cursor-help" id="fan-speed-icon"></i>
+            <span class="text-blue-400"><span id="fan-speed-display">0</span>%</span>
+            <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-2 bg-gray-900 text-sm rounded-lg shadow-lg">
+                Actual fan speed after applying limits and adjustments.
+            </div>
+        </div>
+        <div class="flex-1 h-3 bg-black/30 rounded-full ml-2 relative overflow-hidden">
+            <div id="fan-progress" class="absolute inset-x-0 top-0 h-[45%] bg-blue-500/60 transition-all duration-300" style="width: 0%"></div>
+            <div id="servo-progress" class="absolute inset-x-0 bottom-0 h-[45%] bg-amber-500/60 transition-all duration-300" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <!-- Status Indicators -->
+    <div class="flex gap-2 mb-4" id="status-indicators">
+        <div id="boost-mode" class="hidden px-2 py-1 bg-blue-500/20 text-blue-400 rounded-lg text-sm">
+            <i class="fas fa-rocket mr-1"></i> Boost Mode
+        </div>
+        <div id="lid-open" class="hidden px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-lg text-sm">
+            <i class="fas fa-door-open mr-1"></i> Lid Open
+        </div>
+        <div id="max-power" class="hidden px-2 py-1 bg-red-500/20 text-red-400 rounded-lg text-sm">
+            <i class="fas fa-triangle-exclamation mr-1"></i> Maximum Power
+        </div>
+        <div id="long-pwm" class="hidden px-2 py-1 bg-purple-500/20 text-purple-400 rounded-lg text-sm">
+            <i class="fas fa-wave-square mr-1"></i> Long PWM Mode
+        </div>
+    </div>
+
+    <!-- Main Temperature Display -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="bg-black/40 rounded-lg p-6">
+            <div class="text-7xl font-bold text-orange-500" id="main-temp">0°</div>
+            <div class="text-orange-300">Target: <span id="target-temp">0</span>°</div>
+            <div class="text-sm text-orange-400/80 mt-2"><span id="temp-rate">0</span>°/hr</div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="bg-black/40 rounded-lg p-4">
+                <div class="text-gray-400 mb-1">Food</div>
+                <div class="text-2xl font-bold text-cyan-400"><span id="food-temp">0</span>°</div>
+                <div class="text-sm text-cyan-400/60">Target: <span id="food-target">0</span>°</div>
+            </div>
+            <div class="bg-black/40 rounded-lg p-4">
+                <div class="text-gray-400 mb-1">Ambient</div>
+                <div class="text-2xl font-bold text-cyan-400"><span id="ambient-temp">0</span>°</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Temperature Graph -->
+    <div class="bg-black/40 rounded-lg p-4 mb-4">
+        <div id="graph" class="w-full" style="height: 280px; position: relative;"></div>
+    </div>
+
+       <button class="mt-4 bg-black/40 text-white/60 px-4 py-2 rounded-lg hover:bg-black/60" id="toggle-mock-controls">
+           Show Mock Controls
+       </button>
+   
+       <!-- Mock Controls Modal -->
+       <div id="mock-controls-modal" class="fixed inset-0 bg-black/50 hidden" style="z-index: 1000;">
+           <div id="mock-controls-panel" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/90 rounded-lg p-6 shadow-2xl transform scale-80 w-[500px]" style="touch-action: none;">
+               <!-- Modal Header with Drag Handle -->
+               <div class="flex justify-between items-center mb-4 cursor-move" id="mock-controls-handle">
+                   <h3 class="text-lg text-white/80">Mock Controls</h3>
+                   <button class="text-white/60 hover:text-white" id="close-mock-controls">
+                       <i class="fas fa-times"></i>
+                   </button>
+               </div>
+               
+               <!-- Controls Content -->
+               <div class="space-y-4">
+                   <div>
+                       <label class="block text-sm text-white/60 mb-2">Pit Temperature</label>
+                       <input type="range" class="w-full" id="pit-temp" min="0" max="500" value="250">
+                       <div class="text-right text-sm text-white/60"><span id="pit-temp-value">250</span>°</div>
+                   </div>
+                   <div>
+                       <label class="block text-sm text-white/60 mb-2">Food Temperature</label>
+                       <input type="range" class="w-full" id="food1-temp" min="0" max="500" value="165">
+                       <div class="text-right text-sm text-white/60"><span id="food1-temp-value">165</span>°</div>
+                   </div>
+                   <div>
+                       <label class="block text-sm text-white/60 mb-2">Ambient Temperature</label>
+                       <input type="range" class="w-full" id="food2-temp" min="0" max="500" value="145">
+                       <div class="text-right text-sm text-white/60"><span id="food2-temp-value">145</span>°</div>
+                   </div>
+                   <div>
+                       <label class="block text-sm text-white/60 mb-2">Fan Output</label>
+                       <input type="range" class="w-full" id="fan-output" min="0" max="100" value="45">
+                       <div class="text-right text-sm text-white/60"><span id="fan-output-value">45</span>%</div>
+                   </div>
+   
+                   <!-- Special States -->
+                   <div class="grid grid-cols-2 gap-2">
+                       <button class="bg-yellow-500/20 text-yellow-400 px-4 py-2 rounded-lg hover:bg-yellow-500/30" id="toggle-lid">
+                           <i class="fas fa-door-open mr-1"></i> Toggle Lid
+                       </button>
+                       <button class="bg-blue-500/20 text-blue-400 px-4 py-2 rounded-lg hover:bg-blue-500/30" id="toggle-boost">
+                           <i class="fas fa-rocket mr-1"></i> Toggle Boost
+                       </button>
+                       <button class="bg-purple-500/20 text-purple-400 px-4 py-2 rounded-lg hover:bg-purple-500/30" id="toggle-long-pwm">
+                           <i class="fas fa-wave-square mr-1"></i> Long PWM
+                       </button>
+                       <button class="bg-red-500/20 text-red-400 px-4 py-2 rounded-lg hover:bg-red-500/30" id="toggle-max-power">
+                           <i class="fas fa-triangle-exclamation mr-1"></i> Max Power
+                       </button>
+                   </div>
+   
+                   <!-- Alarm Controls -->
+                   <div class="grid grid-cols-3 gap-2">
+                       <button class="bg-yellow-500/20 text-yellow-400 px-4 py-2 rounded-lg hover:bg-yellow-500/30" id="high-alarm">
+                           <i class="fas fa-bell mr-1"></i> High
+                       </button>
+                       <button class="bg-red-500/20 text-red-400 px-4 py-2 rounded-lg hover:bg-red-500/30" id="low-alarm">
+                           <i class="fas fa-bell mr-1"></i> Low
+                       </button>
+                       <button class="bg-gray-500/20 text-gray-400 px-4 py-2 rounded-lg hover:bg-gray-500/30" id="clear-alarm">
+                           <i class="fas fa-bell-slash mr-1"></i> Clear
+                       </button>
+                   </div>
+               </div>
+           </div>
+       </div>
+</body>
+</html>
